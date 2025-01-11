@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">QuickTap</string>
+        <string name="game">Game</string>
+    <string name="time_limit">Time Limit:</string>
+    <string name="default_time">00:30</string>
+    <string name="change">Change</string>
+    <string name="tap_to_change">Tap to\nchange</string>
+    <string name="player1">Player 1</string>
+    <string name="player2">Player 2</string>
+    <string name="go">GO!</string>
+    <string-array name="to_five">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    <string-array name="to_nine">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+    </string-array>
+    <string name="tap_here">Tap Here</string>
+    <string name="menu">Menu</string>
+    <string-array name="menu_options">
+        <item>CONTINUE</item>
+        <item>EXIT</item>
+    </string-array>
+</resources>
