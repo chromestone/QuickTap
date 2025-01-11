@@ -286,13 +286,7 @@ public class QuickTapActivity extends Activity {
     @Override
     public void onBackPressed() {
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-
-                toggleTouchView(false);
-            }
-        });
+        runOnUiThread(() -> toggleTouchView(false));
         terminateProtocol();
         menuDialog.show();
     }
