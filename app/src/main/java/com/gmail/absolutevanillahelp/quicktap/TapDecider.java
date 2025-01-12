@@ -29,7 +29,7 @@ public class TapDecider extends Thread {
 
                 canTap = false;
                 quickTapActivity.playCanTapSound(false);
-                quickTapActivity.setTouchViewText("DON\'T TAP");
+                quickTapActivity.setTouchViewText("DON'T TAP");
 
                 Thread.sleep(((long) (Math.random() * 51)) * 10 + 500);
 

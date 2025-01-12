@@ -6,6 +6,8 @@ import android.content.pm.*;
 import android.os.*;
 import android.widget.*;
 
+import com.gmail.absolutevanillahelp.quicktap.util.TimeConverter;
+
 /**
  * Created by derekzhang on 8/10/15.
  */
@@ -45,11 +47,13 @@ public class MainActivity extends Activity {
         Button goButton = findViewById(R.id.go_button);
         goButton.setOnClickListener(v -> {
 
-            String timeLimit = spinner1.getSelectedItem().toString()
-                    + spinner2.getSelectedItem().toString()
-                    + spinner3.getSelectedItem().toString()
-                    + spinner4.getSelectedItem().toString();
-            if (timeLimit.equals("0000")) {
+            String minutes =
+                    spinner1.getSelectedItem().toString() + spinner2.getSelectedItem().toString();
+            String seconds =
+                    spinner3.getSelectedItem().toString() + spinner4.getSelectedItem().toString();
+            long millis = TimeConverter.toMillis(minutes, seconds);
+
+            if (millis == 0) {
 
                 new AlertDialog.Builder(MainActivity.this)
                         .setMessage("Time limit cannot be 0!")
@@ -72,41 +76,8 @@ public class MainActivity extends Activity {
             Intent intent = new Intent(MainActivity.this, QuickTapActivity.class);
             intent.putExtra(QuickTapActivity.TAG_PLAYER_1_NAME, player1Name);
             intent.putExtra(QuickTapActivity.TAG_PLAYER_2_NAME, player2Name);
-            intent.putExtra(QuickTapActivity.TAG_TIME_LIMIT, convertToMilliseconds(timeLimit));
+            intent.putExtra(QuickTapActivity.TAG_TIME_LIMIT, millis);
             MainActivity.this.startActivity(intent);
         });
     }
-
-    public static long convertToMilliseconds(String convert) {
-
-        convert = makeItLength4(convert);
-        return (Long.parseLong(convert.substring(0, 2)) * 60L
-                + Long.parseLong(convert.substring(2, 4))) * 1000L;
-    }
-
-    public static String convertToString(long milliseconds) {
-
-        milliseconds /= 1000;
-        return makeItLength4(("" + (milliseconds / 60)) + (milliseconds % 60));
-    }
-
-    private static String makeItLength4(String str) {
-
-        if (str == null) {
-
-            str = "";
-        }
-
-        switch (str.length()) {
-
-            case 0: str = "0" + str;
-            case 1: str = "0" + str;
-            case 2: str = "0" + str;
-            case 3: str = "0" + str;
-            default: break;
-        }
-
-        return str;
-    }
-
 }

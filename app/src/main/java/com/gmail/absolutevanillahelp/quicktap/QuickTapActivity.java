@@ -5,8 +5,9 @@ import android.content.*;
 import android.content.pm.*;
 import android.media.*;
 import android.os.*;
-import android.view.View;
 import android.widget.*;
+
+import com.gmail.absolutevanillahelp.quicktap.util.TimeConverter;
 
 /**
  * Created by derekzhang on 8/10/15.
@@ -63,7 +64,7 @@ public class QuickTapActivity extends Activity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         //sets up the battle bar
-        battleBar = (VerticalProgressBar) findViewById(R.id.battle_bar);
+        battleBar = findViewById(R.id.battle_bar);
         battleBar.setMax(MAX_PROGRESS);
 
         //initiates variable responsible for tracking progress
@@ -79,12 +80,12 @@ public class QuickTapActivity extends Activity {
         ((TextView) findViewById(R.id.player2_name_label)).setText(intent.getStringExtra(TAG_PLAYER_2_NAME));
 
         //sets up time label that is primarily used to display time remaining in game
-        player1TimeText = (TextView) findViewById(R.id.player1_time_label);
-        player2TimeText = (TextView) findViewById(R.id.player2_time_label);
+        player1TimeText = findViewById(R.id.player1_time_label);
+        player2TimeText = findViewById(R.id.player2_time_label);
 
         //sets up the touch views that players use
-        player1TouchView = (TextView) findViewById(R.id.player1_touch_view);
-        player2TouchView = (TextView) findViewById(R.id.player2_touch_view);
+        player1TouchView = findViewById(R.id.player1_touch_view);
+        player2TouchView = findViewById(R.id.player2_touch_view);
 
         //disable user interaction to touch views at first
         toggleTouchView(false);
@@ -94,69 +95,57 @@ public class QuickTapActivity extends Activity {
 
         createTapHandler();
 
-        player1TouchView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        player1TouchView.setOnClickListener(v -> {
 
-                if (tapHandler != null) {
+            if (tapHandler != null) {
 
-                    final boolean canTap = tapDecider.canTap();
-                    tapHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
+                final boolean canTap = tapDecider.canTap();
+                tapHandler.post(() -> {
 
-                            long original = player1Score;
-                            if (canTap) {
+                    long original = player1Score;
+                    if (canTap) {
 
-                                player1Score++;
-                            }
-                            else {
+                        player1Score++;
+                    }
+                    else {
 
-                                for (int i = 0; player1Score > 1 && i < 2; i++) {
+                        for (int i = 0; player1Score > 1 && i < 2; i++) {
 
-                                    player1Score--;
-                                }
-                            }
-
-                            if (player1Score != original) {
-
-                                updateBattleBar();
-                            }
+                            player1Score--;
                         }
-                    });
-                }
+                    }
+
+                    if (player1Score != original) {
+
+                        updateBattleBar();
+                    }
+                });
             }
         });
-        player2TouchView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        player2TouchView.setOnClickListener(v -> {
 
-                if (tapHandler != null) {
+            if (tapHandler != null) {
 
-                    final boolean canTap = tapDecider.canTap();
-                    tapHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
+                final boolean canTap = tapDecider.canTap();
+                tapHandler.post(() -> {
 
-                            long original = player2Score;
-                            if (canTap) {
+                    long original = player2Score;
+                    if (canTap) {
 
-                                player2Score++;
-                            }
-                            else {
+                        player2Score++;
+                    }
+                    else {
 
-                                for (int i = 0; player2Score > 1 && i < 2; i++) {
+                        for (int i = 0; player2Score > 1 && i < 2; i++) {
 
-                                    player2Score--;
-                                }
-                            }
-                            if (player2Score != original) {
-
-                                updateBattleBar();
-                            }
+                            player2Score--;
                         }
-                    });
-                }
+                    }
+                    if (player2Score != original) {
+
+                        updateBattleBar();
+                    }
+                });
             }
         });
 
@@ -164,34 +153,26 @@ public class QuickTapActivity extends Activity {
 
         menuDialog = new AlertDialog.Builder(QuickTapActivity.this)
                 .setTitle("QUICKTAP GAME PAUSED")
-                .setItems(R.array.menu_options, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                .setItems(R.array.menu_options, (dialog, which) -> {
 
-                        if (which == 0) {
+                    if (which == 0) {
 
-                            createTapHandler();
-                            tapDecider = new TapDecider(QuickTapActivity.this);
-                            countdownTimer = countdownTimer.reset();
-                            readySetGo = new ReadySetGo();
-                            readySetGo.start();
-                        } else if (which == 1) {
+                        setTouchViewText("TAP");
+                        createTapHandler();
+                        tapDecider = new TapDecider(QuickTapActivity.this);
+                        countdownTimer = countdownTimer.reset();
+                        readySetGo = new ReadySetGo();
+                        readySetGo.start();
+                    } else if (which == 1) {
 
-                            dialog.dismiss();
-                            finish();
-                        }
+                        dialog.dismiss();
+                        finish();
                     }
                 })
                 .setCancelable(false)
                 .create();
 
-        ((ImageButton) findViewById(R.id.menu_button)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                onBackPressed();
-            }
-        });
+        findViewById(R.id.menu_button).setOnClickListener(v -> onBackPressed());
 
         onFirstRun = true;
 
@@ -213,19 +194,16 @@ public class QuickTapActivity extends Activity {
         }
 
         soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
-        soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
-            @Override
-            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+        soundPool.setOnLoadCompleteListener((soundPool, sampleId, status) -> {
 
-                if (status == 0 && soundIDs != null && soundIDs.length >= 2) {
+            if (status == 0 && soundIDs != null && soundIDs.length >= 2) {
 
-                    if (sampleId == soundIDs[0]) {
+                if (sampleId == soundIDs[0]) {
 
-                        stopSoundLoaded = true;
-                    } else if (sampleId == soundIDs[1]) {
+                    stopSoundLoaded = true;
+                } else if (sampleId == soundIDs[1]) {
 
-                        tapSoundLoaded = true;
-                    }
+                    tapSoundLoaded = true;
                 }
             }
         });
@@ -309,13 +287,10 @@ public class QuickTapActivity extends Activity {
 
     public void setTouchViewText(final String text) {
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
+        runOnUiThread(() -> {
 
-                player1TouchView.setText(text);
-                player2TouchView.setText(text);
-            }
+            player1TouchView.setText(text);
+            player2TouchView.setText(text);
         });
     }
 
@@ -343,13 +318,7 @@ public class QuickTapActivity extends Activity {
 
             progress = (int) ((double) player1Score / (combined) * 10000);
             final int progress = this.progress;
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-
-                    battleBar.setProgress(progress);
-                }
-            });
+            runOnUiThread(() -> battleBar.setProgress(progress));
         }
     }
 
@@ -364,7 +333,7 @@ public class QuickTapActivity extends Activity {
                 finisher("It's a tie!");
             } else {
 
-                String winner = "";
+                String winner;
                 if (battleBar.getProgress() < MAX_PROGRESS / 2) {
 
                     winner = getIntent().getStringExtra(TAG_PLAYER_2_NAME);
@@ -386,13 +355,10 @@ public class QuickTapActivity extends Activity {
 
         new AlertDialog.Builder(this)
                 .setMessage(message)
-                .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                .setNeutralButton("Ok", (dialog, which) -> {
 
-                        dialog.dismiss();
-                        QuickTapActivity.super.finish();
-                    }
+                    dialog.dismiss();
+                    QuickTapActivity.super.finish();
                 })
                 .setCancelable(false)
                 .show();
@@ -431,15 +397,9 @@ public class QuickTapActivity extends Activity {
 
             totalTimeLeft = millisUntilFinished;
 
-            String str = MainActivity.convertToString(millisUntilFinished);
+            String str = TimeConverter.toString(millisUntilFinished);
             final String time = str.substring(0, 2) + ":" + str.substring(2,4);
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-
-                    setTimeDisplay(time);
-                }
-            });
+            runOnUiThread(() -> setTimeDisplay(time));
         }
 
         @Override
@@ -449,14 +409,11 @@ public class QuickTapActivity extends Activity {
 
             totalTimeLeft = 0;
 
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+            runOnUiThread(() -> {
 
-                    setTimeDisplay("00:00");
-                    toggleTouchView(false);
-                    finish();
-                }
+                setTimeDisplay("00:00");
+                toggleTouchView(false);
+                finish();
             });
         }
 
@@ -497,13 +454,7 @@ public class QuickTapActivity extends Activity {
                 message = "";
             }
 
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-
-                    setTimeDisplay(message);
-                }
-            });
+            runOnUiThread(() -> setTimeDisplay(message));
 
             counter++;
         }
@@ -514,12 +465,10 @@ public class QuickTapActivity extends Activity {
             tapDecider.start();
             countdownTimer.start();
 
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+            runOnUiThread(() -> {
 
-                    toggleTouchView(true);
-                }
+                toggleTouchView(true);
+                playCanTapSound(tapDecider.canTap());
             });
 
             counter = 0;
