@@ -25,15 +25,11 @@ public final class TimeConverter {
             str = "";
         }
 
-        switch (str.length()) {
+        if (str.length() >= 4) {
 
-            case 0: str = "0" + str;
-            case 1: str = "0" + str;
-            case 2: str = "0" + str;
-            case 3: str = "0" + str;
-            default: break;
+            return str;
         }
 
-        return str;
+        return "0".repeat(4 - str.length()) + str;
     }
 }

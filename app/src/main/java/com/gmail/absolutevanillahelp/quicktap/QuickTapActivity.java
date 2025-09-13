@@ -276,7 +276,6 @@ public class QuickTapActivity extends Activity {
             if (tapSoundLoaded) {
 
                 soundPool.play(soundIDs[1], 1, 1, 0, 0, 1);
-                android.util.Log.i("BAT", "hi");
             }
         }
         else if (stopSoundLoaded) {
